@@ -54,8 +54,18 @@ def unicode_to_utf8_bytes(codepoint: int) -> list[int]:
 	return list(chr(codepoint).encode("utf-8"))
 
 def parse_ucm_to_utf8_map(ucm_path):
-	codepage_to_utf8 = {}
-	max_utf8_len = 0
+	# The third column of a .ucm CHARMAP entry is the ICU precision indicator
+	# (https://unicode-org.github.io/icu/userguide/conversion/data.html#ucm-format):
+	#   |0  roundtrip mapping (both directions)
+	#   |1  fallback mapping, Unicode -> codepage only
+	#   |2  substitution character (subchar1), Unicode -> codepage only
+	#   |3  reverse fallback mapping, codepage -> Unicode only
+	#   |4  "good one-way" mapping, Unicode -> codepage only
+	# We only decode (codepage -> UTF-8), so only |0 and |3 entries are valid here. A byte
+	# sequence often appears in several |1 entries after its |0 entry (e.g. <U0074> \x74 |0 and
+	# <UFF54> \x74 |1 in windows-1252-2000.ucm); those must never override the roundtrip mapping.
+	roundtrip = {}
+	reverse_fallback = {}
 
 	with open(ucm_path, 'r', encoding='utf-8') as f:
 		in_charmap = False
@@ -71,16 +81,23 @@ def parse_ucm_to_utf8_map(ucm_path):
 			if not in_charmap:
 				continue
 
-			match = re.match(r'<U([0-9A-Fa-f]+)>\s+((?:\\x[0-9A-Fa-f]{2})+)\s+\|\d+', line)
+			match = re.match(r'<U([0-9A-Fa-f]+)>\s+((?:\\x[0-9A-Fa-f]{2})+)\s+\|(\d+)', line)
 			if not match:
 				continue
 
 			unicode_scalar = int(match.group(1), 16)
 			byte_seq = bytes(int(b[2:], 16) for b in re.findall(r'\\x[0-9A-Fa-f]{2}', match.group(2)))
+			precision = int(match.group(3))
 
 			utf8_encoded = chr(unicode_scalar).encode('utf-8')
-			codepage_to_utf8[byte_seq] = utf8_encoded
+			if precision == 0:
+				roundtrip[byte_seq] = utf8_encoded
+			elif precision == 3:
+				reverse_fallback[byte_seq] = utf8_encoded
 
+	# A roundtrip mapping always takes precedence over a reverse fallback for the same byte sequence
+	codepage_to_utf8 = reverse_fallback
+	codepage_to_utf8.update(roundtrip)
 	return codepage_to_utf8
 
 def generate_cpp_map(class_name,encoding_name, codepage_to_utf8, filepath):

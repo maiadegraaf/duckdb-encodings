@@ -26,7 +26,7 @@ public:
 	const idx_t lookup_bytes = 2;
 	const idx_t max_bytes_per_byte = 3;
 	const string name = "zh_CN_cp935";
-	const idx_t size = 9522;
+	const idx_t size = 9395;
 
 	static void Register(const DBConfig &config);
 };

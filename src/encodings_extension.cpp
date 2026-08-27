@@ -38,5 +38,4 @@ extern "C" {
 DUCKDB_CPP_EXTENSION_ENTRY(encodings, loader) {
 	duckdb::LoadInternal(loader);
 }
-
 }
