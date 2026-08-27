@@ -28,8 +28,18 @@ struct DuckDBEncodingsData : public GlobalTableFunctionState {
 	idx_t offset = 0;
 };
 
+// The type of the `names` parameter of a table function bind callback (vector<string> & up to DuckDB 1.5,
+// vector<Identifier> & afterwards), so that this compiles against both.
+template <class BIND>
+struct BindNamesParameter;
+template <class RETURN, class CONTEXT, class INPUT, class TYPES, class NAMES>
+struct BindNamesParameter<RETURN (*)(CONTEXT, INPUT, TYPES, NAMES)> {
+	using type = NAMES;
+};
+using bind_names_t = BindNamesParameter<table_function_bind_t>::type;
+
 static unique_ptr<FunctionData> DuckDBEncodingsBind(ClientContext &context, TableFunctionBindInput &input,
-                                                    vector<LogicalType> &return_types, vector<string> &names) {
+                                                    vector<LogicalType> &return_types, bind_names_t names) {
 	// The encoding name, as accepted by read_csv(encoding := ...)
 	names.emplace_back("name");
 	return_types.emplace_back(LogicalType::VARCHAR);
