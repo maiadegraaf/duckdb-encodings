@@ -42,16 +42,16 @@ static unique_ptr<FunctionData> DuckDBEncodingsBind(ClientContext &context, Tabl
                                                     vector<LogicalType> &return_types, bind_names_t names) {
 	// The encoding name, as accepted by read_csv(encoding := ...)
 	names.emplace_back("name");
-	return_types.emplace_back(LogicalType::VARCHAR);
+	return_types.emplace_back(LogicalTypeId::VARCHAR);
 	// The longest byte sequence that encodes a single character
 	names.emplace_back("max_input_bytes");
-	return_types.emplace_back(LogicalType::BIGINT);
+	return_types.emplace_back(LogicalTypeId::BIGINT);
 	// The longest UTF-8 output produced for one byte sequence of the encoding
 	names.emplace_back("max_output_bytes");
-	return_types.emplace_back(LogicalType::BIGINT);
+	return_types.emplace_back(LogicalTypeId::BIGINT);
 	// The number of byte sequences in the conversion table (0 for DuckDB's built-in decoders)
 	names.emplace_back("map_size");
-	return_types.emplace_back(LogicalType::BIGINT);
+	return_types.emplace_back(LogicalTypeId::BIGINT);
 	return nullptr;
 }
 
