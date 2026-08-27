@@ -9808,7 +9808,8 @@ static const map_entry_encoding windows_932_2000_to_utf8[] = {
 };
 
 // Aliases of "windows-932-2000": the names Python accepts for its codec "cp932"
-static const char *const windows_932_2000_aliases[] = {"932", "cp932", "ms-kanji", "ms932", "ms_kanji", "mskanji"};
+static const char *const windows_932_2000_aliases[] = {"932",      "cp932",   "ms-kanji",    "ms932",
+                                                       "ms_kanji", "mskanji", "windows-31j", "windows_31j"};
 
 void Windows_932_2000ToUtf::Register(const DBConfig &config) {
 	const Windows_932_2000ToUtf generated_function;

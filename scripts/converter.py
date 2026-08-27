@@ -82,6 +82,9 @@ python_codec_for_icu_name = {
 # Names without a Python codec that are still commonly reported for a registered table (e.g. by chardet)
 extra_aliases = {
 	'EUC_TW': ['euc-tw', 'euctw'],
+	# IANA name of Microsoft's CP932 (issue #19); Python only knows it as cp932/ms932
+	'windows-932-2000': ['windows-31j', 'windows_31j'],
+	'ibm-943_P15A-2003': ['ibm-943', 'ibm_943', 'cp943'],
 }
 
 # All codec modules shipped with Python (e.g. cp1252, iso8859_4, koi8_r, euc_kr)

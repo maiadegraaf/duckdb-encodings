@@ -17,6 +17,14 @@ After that, all encodings are initialized in your database instance. To use them
 FROM read_csv('my_shift_jis.csv', encoding = 'shift_jis')
 ```
 
+Besides the ICU `<code_set_name>`, every encoding that has a Python codec also accepts the names Python (and therefore tools such as `chardet`) use for it, e.g. `windows-1252`, `ISO-8859-4`, `iso8859-4`, `latin1`, `KOI8-R`, `EUC-KR` or `cp932`. Names are matched case-insensitively.
+
+The full list of accepted names can be queried with `duckdb_encodings()`:
+
+```sql
+SELECT name FROM duckdb_encodings() WHERE name LIKE '%1252%';
+```
+
 ## Building
 ### Generating Encoding Maps
 Most of the code in this library consists of auto-generated maps from the Unicode data. The Unicode data is inlined in the `third_party` folder, and the generated code resides in `src/include/generated` and `src/generated` . Any changes to files in these folders should be made by modifying the `scripts/converter.py` script, rather than editing the files manually.
