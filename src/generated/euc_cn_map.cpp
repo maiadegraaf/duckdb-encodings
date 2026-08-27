@@ -7501,12 +7501,26 @@ static const map_entry_encoding EUC_CN_to_utf8[] = {
     {2, "\xF7\xFD", 3, "\xE9\xBC\xBE"},
     {2, "\xF7\xFE", 3, "\xE9\xBD\x84"},
 };
+
+// Aliases of "EUC_CN": the names Python accepts for its codec "gb2312"
+static const char *const EUC_CN_aliases[] = {"chinese",     "csiso58gb231280",    "euc-cn",
+                                             "euccn",       "eucgb2312-cn",       "eucgb2312_cn",
+                                             "gb2312",      "gb2312-1980",        "gb2312-80",
+                                             "gb2312_1980", "gb2312_80",          "iso-ir-58",
+                                             "iso_ir_58",   "x-mac-simp-chinese", "x_mac_simp_chinese"};
+
 void Euc_cnToUtf::Register(const DBConfig &config) {
 	const Euc_cnToUtf generated_function;
 	const EncodingFunction function(generated_function.name, GeneratedEncodedFunction::Decode,
 	                                generated_function.max_bytes_per_byte, generated_function.lookup_bytes,
 	                                EUC_CN_to_utf8, generated_function.size);
 	config.RegisterEncodeFunction(function);
+	for (const auto *alias : EUC_CN_aliases) {
+		const EncodingFunction alias_function(alias, GeneratedEncodedFunction::Decode,
+		                                      generated_function.max_bytes_per_byte, generated_function.lookup_bytes,
+		                                      EUC_CN_to_utf8, generated_function.size);
+		config.RegisterEncodeFunction(alias_function);
+	}
 }
 } // namespace duckdb_encodings
 } // namespace duckdb

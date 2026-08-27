@@ -90,12 +90,24 @@ static const map_entry_encoding ISO8859_7_to_utf8[] = {
     {1, "\xFB", 2, "\xCF\x8B"},     {1, "\xFC", 2, "\xCF\x8C"}, {1, "\xFD", 2, "\xCF\x8D"},
     {1, "\xFE", 2, "\xCF\x8E"},
 };
+
+// Aliases of "ISO8859_7": the names Python accepts for its codec "iso8859_7"
+static const char *const ISO8859_7_aliases[] = {
+    "csisolatingreek", "ecma-118",        "ecma_118",   "elot-928",  "elot_928",        "greek",     "greek8",
+    "iso-8859-7",      "iso-8859-7-1987", "iso-ir-126", "iso8859-7", "iso_8859_7_1987", "iso_ir_126"};
+
 void Iso8859_7ToUtf::Register(const DBConfig &config) {
 	const Iso8859_7ToUtf generated_function;
 	const EncodingFunction function(generated_function.name, GeneratedEncodedFunction::Decode,
 	                                generated_function.max_bytes_per_byte, generated_function.lookup_bytes,
 	                                ISO8859_7_to_utf8, generated_function.size);
 	config.RegisterEncodeFunction(function);
+	for (const auto *alias : ISO8859_7_aliases) {
+		const EncodingFunction alias_function(alias, GeneratedEncodedFunction::Decode,
+		                                      generated_function.max_bytes_per_byte, generated_function.lookup_bytes,
+		                                      ISO8859_7_to_utf8, generated_function.size);
+		config.RegisterEncodeFunction(alias_function);
+	}
 }
 } // namespace duckdb_encodings
 } // namespace duckdb

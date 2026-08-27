@@ -7075,12 +7075,23 @@ static const map_entry_encoding shift_jis_to_utf8[] = {
     {2, "\xEA\xA3", 3, "\xE5\x87\x9C"},
     {2, "\xEA\xA4", 3, "\xE7\x86\x99"},
 };
+
+// Aliases of "shift_jis": the names Python accepts for its codec "shift_jis"
+static const char *const shift_jis_aliases[] = {"csshiftjis", "s-jis", "s_jis",          "shift-jis",
+                                                "shiftjis",   "sjis",  "x-mac-japanese", "x_mac_japanese"};
+
 void Shift_jisToUtf::Register(const DBConfig &config) {
 	const Shift_jisToUtf generated_function;
 	const EncodingFunction function(generated_function.name, GeneratedEncodedFunction::Decode,
 	                                generated_function.max_bytes_per_byte, generated_function.lookup_bytes,
 	                                shift_jis_to_utf8, generated_function.size);
 	config.RegisterEncodeFunction(function);
+	for (const auto *alias : shift_jis_aliases) {
+		const EncodingFunction alias_function(alias, GeneratedEncodedFunction::Decode,
+		                                      generated_function.max_bytes_per_byte, generated_function.lookup_bytes,
+		                                      shift_jis_to_utf8, generated_function.size);
+		config.RegisterEncodeFunction(alias_function);
+	}
 }
 } // namespace duckdb_encodings
 } // namespace duckdb

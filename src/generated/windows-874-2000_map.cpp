@@ -92,12 +92,22 @@ static const map_entry_encoding windows_874_2000_to_utf8[] = {
     {1, "\xFC", 3, "\xEF\xA3\x85"}, {1, "\xFD", 3, "\xEF\xA3\x86"}, {1, "\xFE", 3, "\xEF\xA3\x87"},
     {1, "\xFF", 3, "\xEF\xA3\x88"},
 };
+
+// Aliases of "windows-874-2000": the names Python accepts for its codec "cp874"
+static const char *const windows_874_2000_aliases[] = {"cp874"};
+
 void Windows_874_2000ToUtf::Register(const DBConfig &config) {
 	const Windows_874_2000ToUtf generated_function;
 	const EncodingFunction function(generated_function.name, GeneratedEncodedFunction::Decode,
 	                                generated_function.max_bytes_per_byte, generated_function.lookup_bytes,
 	                                windows_874_2000_to_utf8, generated_function.size);
 	config.RegisterEncodeFunction(function);
+	for (const auto *alias : windows_874_2000_aliases) {
+		const EncodingFunction alias_function(alias, GeneratedEncodedFunction::Decode,
+		                                      generated_function.max_bytes_per_byte, generated_function.lookup_bytes,
+		                                      windows_874_2000_to_utf8, generated_function.size);
+		config.RegisterEncodeFunction(alias_function);
+	}
 }
 } // namespace duckdb_encodings
 } // namespace duckdb

@@ -24076,12 +24076,22 @@ static const map_entry_encoding windows_936_2000_to_utf8[] = {
     {2, "\xFE\xFE", 3, "\xEE\x93\x85"},
     {1, "\xFF", 3, "\xEF\xA3\xB5"},
 };
+
+// Aliases of "windows-936-2000": the names Python accepts for its codec "gbk"
+static const char *const windows_936_2000_aliases[] = {"936", "cp936", "gbk", "ms936"};
+
 void Windows_936_2000ToUtf::Register(const DBConfig &config) {
 	const Windows_936_2000ToUtf generated_function;
 	const EncodingFunction function(generated_function.name, GeneratedEncodedFunction::Decode,
 	                                generated_function.max_bytes_per_byte, generated_function.lookup_bytes,
 	                                windows_936_2000_to_utf8, generated_function.size);
 	config.RegisterEncodeFunction(function);
+	for (const auto *alias : windows_936_2000_aliases) {
+		const EncodingFunction alias_function(alias, GeneratedEncodedFunction::Decode,
+		                                      generated_function.max_bytes_per_byte, generated_function.lookup_bytes,
+		                                      windows_936_2000_to_utf8, generated_function.size);
+		config.RegisterEncodeFunction(alias_function);
+	}
 }
 } // namespace duckdb_encodings
 } // namespace duckdb

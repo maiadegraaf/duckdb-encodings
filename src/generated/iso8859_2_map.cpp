@@ -70,12 +70,24 @@ static const map_entry_encoding ISO8859_2_to_utf8[] = {
     {1, "\xF8", 2, "\xC5\x99"}, {1, "\xF9", 2, "\xC5\xAF"}, {1, "\xFA", 2, "\xC3\xBA"}, {1, "\xFB", 2, "\xC5\xB1"},
     {1, "\xFC", 2, "\xC3\xBC"}, {1, "\xFD", 2, "\xC3\xBD"}, {1, "\xFE", 2, "\xC5\xA3"}, {1, "\xFF", 2, "\xCB\x99"},
 };
+
+// Aliases of "ISO8859_2": the names Python accepts for its codec "iso8859_2"
+static const char *const ISO8859_2_aliases[] = {"csisolatin2", "iso-8859-2", "iso-8859-2-1987",
+                                                "iso-ir-101",  "iso8859-2",  "iso_8859_2_1987",
+                                                "iso_ir_101",  "l2",         "latin2"};
+
 void Iso8859_2ToUtf::Register(const DBConfig &config) {
 	const Iso8859_2ToUtf generated_function;
 	const EncodingFunction function(generated_function.name, GeneratedEncodedFunction::Decode,
 	                                generated_function.max_bytes_per_byte, generated_function.lookup_bytes,
 	                                ISO8859_2_to_utf8, generated_function.size);
 	config.RegisterEncodeFunction(function);
+	for (const auto *alias : ISO8859_2_aliases) {
+		const EncodingFunction alias_function(alias, GeneratedEncodedFunction::Decode,
+		                                      generated_function.max_bytes_per_byte, generated_function.lookup_bytes,
+		                                      ISO8859_2_to_utf8, generated_function.size);
+		config.RegisterEncodeFunction(alias_function);
+	}
 }
 } // namespace duckdb_encodings
 } // namespace duckdb
