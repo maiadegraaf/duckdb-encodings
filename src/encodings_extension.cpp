@@ -73,12 +73,13 @@ static void DuckDBEncodingsFunction(ClientContext &context, TableFunctionInput &
 	idx_t count = 0;
 	while (data.offset < data.entries.size() && count < STANDARD_VECTOR_SIZE) {
 		auto &entry = data.entries[data.offset++];
-		output.SetValue(0, count, Value(entry.name));
-		output.SetValue(1, count, Value::BIGINT(NumericCast<int64_t>(entry.max_input_bytes)));
-		output.SetValue(2, count, Value::BIGINT(NumericCast<int64_t>(entry.max_output_bytes)));
-		output.SetValue(3, count, Value::BIGINT(NumericCast<int64_t>(entry.map_size)));
+		output.data[0].SetValue(count, Value(entry.name));
+		output.data[1].SetValue(count, Value::BIGINT(NumericCast<int64_t>(entry.max_input_bytes)));
+		output.data[2].SetValue(count, Value::BIGINT(NumericCast<int64_t>(entry.max_output_bytes)));
+		output.data[3].SetValue(count, Value::BIGINT(NumericCast<int64_t>(entry.map_size)));
 		count++;
 	}
+	// DataChunk::SetCardinality is deprecated on DuckDB main, but its replacements do not exist on 1.5 yet
 	output.SetCardinality(count);
 }
 
