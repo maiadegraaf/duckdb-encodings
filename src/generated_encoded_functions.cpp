@@ -87,8 +87,14 @@ void GeneratedEncodedFunction::Decode(CSVEncoderBuffer &encoded_buffer, char *ta
 		}
 		if (!match) {
 			// No mapping for this byte: pass it through unchanged
-			target_buffer[target_buffer_current_position++] = *current;
 			encoded_buffer.cur_pos++;
+			if (target_buffer_current_position == target_buffer_size) {
+				// The target buffer is full: hand the byte to the next chunk instead of writing past the end
+				remaining_bytes_buffer[0] = *current;
+				remaining_bytes_size = 1;
+				return;
+			}
+			target_buffer[target_buffer_current_position++] = *current;
 			continue;
 		}
 		encoded_buffer.cur_pos += match_len;

@@ -20428,12 +20428,22 @@ static const map_entry_encoding ibm_964_P110_1999_to_utf8[] = {
     {2, "\xFD\xCA", 3, "\xE9\xB8\x9E"},
     {2, "\xFD\xCB", 3, "\xE7\xB1\xB2"},
 };
+
+// Aliases of "ibm-964_P110-1999": commonly used names
+static const char *const ibm_964_P110_1999_aliases[] = {"euc-tw", "euctw"};
+
 void Ibm_964_p110_1999ToUtf::Register(const DBConfig &config) {
 	const Ibm_964_p110_1999ToUtf generated_function;
 	const EncodingFunction function(generated_function.name, GeneratedEncodedFunction::Decode,
 	                                generated_function.max_bytes_per_byte, generated_function.lookup_bytes,
 	                                ibm_964_P110_1999_to_utf8, generated_function.size);
 	config.RegisterEncodeFunction(function);
+	for (const auto *alias : ibm_964_P110_1999_aliases) {
+		const EncodingFunction alias_function(alias, GeneratedEncodedFunction::Decode,
+		                                      generated_function.max_bytes_per_byte, generated_function.lookup_bytes,
+		                                      ibm_964_P110_1999_to_utf8, generated_function.size);
+		config.RegisterEncodeFunction(alias_function);
+	}
 }
 } // namespace duckdb_encodings
 } // namespace duckdb

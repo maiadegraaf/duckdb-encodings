@@ -36,7 +36,7 @@ static unique_ptr<FunctionData> DuckDBEncodingsBind(ClientContext &context, Tabl
 	// The longest byte sequence that encodes a single character
 	names.emplace_back("max_input_bytes");
 	return_types.emplace_back(LogicalType::BIGINT);
-	// The most UTF-8 bytes a single input byte can expand to
+	// The longest UTF-8 output produced for one byte sequence of the encoding
 	names.emplace_back("max_output_bytes");
 	return_types.emplace_back(LogicalType::BIGINT);
 	// The number of byte sequences in the conversion table (0 for DuckDB's built-in decoders)
