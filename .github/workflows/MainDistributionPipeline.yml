@@ -16,7 +16,7 @@ jobs:
     name: Build extension binaries (next build)
     uses: duckdb/extension-ci-tools/.github/workflows/_extension_distribution.yml@main
     with:
-      duckdb_version: main
+      duckdb_version: 209e98f4f2e3142b73f574d01b4440606d9bf5d8
       ci_tools_version: main
       extension_name: encodings
 
@@ -24,6 +24,6 @@ jobs:
     name: Build extension binaries
     uses: duckdb/extension-ci-tools/.github/workflows/_extension_distribution.yml@main
     with:
-      duckdb_version: v1.5-variegata
+      duckdb_version: 209e98f4f2e3142b73f574d01b4440606d9bf5d8
       ci_tools_version: main
       extension_name: encodings
